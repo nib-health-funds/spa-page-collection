@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+
+        .is-hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="js-page-0 is-hidden">
+        <h1>Page #0</h1>
+        <button class="js-previous" disabled>Previous</button>
+        <button class="js-next">Next</button>
+    </div>
+
+    <div class="js-page-1 is-hidden">
+        <h1>Page #1</h1>
+        <button class="js-previous">Previous</button>
+        <button class="js-next">Next</button>
+    </div>
+
+    <div class="js-page-2 is-hidden">
+        <h1>Page #2</h1>
+        <button class="js-previous">Previous</button>
+        <button class="js-next" disabled>Next</button>
+    </div>
+
+    <script src="../build/build.js"></script>
+    <script>
+        var emitter = require('emitter');
+
+        function Page(options) {
+            var self        = this;
+
+            this.el         = options.el;
+            this.name       = options.name;
+            this.url        = options.url;
+            this.title      = options.title;
+
+            this.el.querySelector('.js-previous').addEventListener('click', function() {
+                self.emit('navigate', 'previous');
+            });
+
+            this.el.querySelector('.js-next').addEventListener('click', function() {
+                self.emit('navigate', 'next');
+            });
+
+        }
+
+        Page.prototype = {
+
+            getName: function() {
+                return this.name;
+            },
+
+            getUrl: function() {
+                return this.url;
+            },
+
+            getTitle: function() {
+                return this.title;
+            },
+
+            show: function() {
+                this.el.classList.remove('is-hidden');
+                return this;
+            },
+
+            hide: function() {
+                this.el.classList.add('is-hidden');
+                return this;
+            }
+
+        };
+
+        emitter(Page.prototype);
+
+    </script>
+    <script>
+
+        var Collection = require('spa-page-collection');
+        var collection = new Collection({basePath: '/spa-page-collection/example'});
+
+        var page0 = new Page({el: document.querySelector('.js-page-0'), name: 'page-0', url: '/index.html', title: 'Page #0', next: 'page-1'});
+        var page1 = new Page({el: document.querySelector('.js-page-1'), name: 'page-1', url: '/page-1', title: 'Page #1', previous: 'page-0', next: 'page-2'});
+        var page2 = new Page({el: document.querySelector('.js-page-2'), name: 'page-2', url: '/page-2', title: 'Page #2', previous: 'page-1'});
+
+        collection.append(page0).append(page1).append(page2).listen();
+
+    </script>
+</body>
+</html>
