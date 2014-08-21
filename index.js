@@ -270,7 +270,7 @@ PageCollection.prototype.onRouteMatched = function(context) {
       url = url.substr(0, pos);
     }
   }
-console.log(url);
+
   //find and show the page
   var page = this.findByUrl(url);
   if (page) {
