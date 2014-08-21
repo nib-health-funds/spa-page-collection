@@ -10,6 +10,7 @@ var forward = require('forward-events');
  * A collection of pages
  * @constructor
  * @param   {Object}  options
+ * @param   {String}  options.baseUrl
  */
 function PageCollection(options) {
 
@@ -34,9 +35,12 @@ function PageCollection(options) {
   this.router = require('page');
 
   //set the router base path
-  if (options && options.basePath) {
-    this.router.base(options.basePath);
+  if (options && options.baseUrl) {
+    this.router.base(options.baseUrl);
   }
+
+  //set whether the query string is ignored during routing
+  this.ignoreQueryString = options && typeof options.ignoreQueryString !== 'undefined' ? options.ignoreQueryString : true;
 
 }
 emitter(PageCollection.prototype);
@@ -49,7 +53,7 @@ PageCollection.prototype.listen = function() {
 
   //handle page not found
   this.router('*', function(context) {
-    throw new Error('Route "'+context.path+'" not found');
+    throw new Error('Unable to route URL "'+context.path+'" to a page.');
   });
 
   //start routing
@@ -256,7 +260,25 @@ PageCollection.prototype.display = function(page) {
  * @param     {Object}  context
  */
 PageCollection.prototype.onRouteMatched = function(context) {
-  this.display(this.findByUrl(context.path));
+
+  var url = context.path;
+
+  //strip the querystring from the URL
+  if (this.ignoreQueryString) {
+    var pos = url.indexOf('?');
+    if (pos !== -1) {
+      url = url.substr(0, pos);
+    }
+  }
+console.log(url);
+  //find and show the page
+  var page = this.findByUrl(url);
+  if (page) {
+    this.display(page);
+  } else{
+    throw new Error('Unable to route URL "'+context.path+'" to a page.');
+  }
+
 };
 
 /**

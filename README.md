@@ -10,7 +10,7 @@ Create a new collection.
 
 #### Options:
 
-- `basePath` - The common part of the path for all the pages.
+- `baseUrl` - The common URL path for all pages.
 
 ### .prepend(page)
 
