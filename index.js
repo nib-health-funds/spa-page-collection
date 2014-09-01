@@ -63,6 +63,15 @@ PageCollection.prototype.listen = function() {
 };
 
 /**
+ * Find the index of a page
+ * @param     {Page}  page
+ * @returns   {Number}
+ */
+PageCollection.prototype.indexOf = function(page) {
+  return this.pages.indexOf(page);
+};
+
+/**
  * Find a page by name
  * @param     {String}  name
  * @returns   {Page|null}
