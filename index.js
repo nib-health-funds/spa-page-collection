@@ -283,7 +283,9 @@ PageCollection.prototype.onRouteMatched = function(context) {
   //find and show the page
   var page = this.findByUrl(url);
   if (page) {
-    this.display(page);
+    if (page !== this.page) {
+      this.display(page);
+    }
   } else{
     throw new Error('Unable to route URL "'+context.path+'" to a page.');
   }
