@@ -9,8 +9,9 @@ var forward = require('forward-events');
 /**
  * A collection of pages
  * @constructor
- * @param   {Object}  options
- * @param   {String}  options.baseUrl
+ * @param   {Object}            options
+ * @param   {String}            options.baseUrl
+ * @param   {Function(Object)}  options.onPageNotFound
  */
 function PageCollection(options) {
 
@@ -39,6 +40,15 @@ function PageCollection(options) {
     this.router.base(options.baseUrl);
   }
 
+  //set the page not found handler
+  if (options && typeof(options.onPageNotFound) === 'function') {
+    this.onPageNotFound = options.onPageNotFound;
+  } else {
+    this.onPageNotFound = function(context) {
+      throw new Error('Unable to route URL "'+context.path+'" to a page.');
+    };
+  }
+
   //set whether the query string is ignored during routing
   this.ignoreQueryString = options && typeof options.ignoreQueryString !== 'undefined' ? options.ignoreQueryString : true;
 
@@ -51,10 +61,8 @@ emitter(PageCollection.prototype);
  */
 PageCollection.prototype.listen = function() {
 
-  //handle page not found
-  this.router('*', function(context) {
-    throw new Error('Unable to route URL "'+context.path+'" to a page.');
-  });
+  //handle routes that don't map to a page
+  this.router('*', this.onPageNotFound);
 
   //start routing
   this.router();

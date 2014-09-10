@@ -11,6 +11,7 @@ Create a new collection.
 #### Options:
 
 - `baseUrl` - The common URL path for all pages.
+- `onPageNotFound` - A function to handle URLs that don't map to a page, instead of throwing an error.
 
 ### .prepend(page)
 

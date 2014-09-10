@@ -85,7 +85,12 @@
     <script>
 
         var Collection = require('spa-page-collection');
-        var collection = new Collection({baseUrl: '/spa-page-collection/example'});
+        var collection = new Collection({
+            baseUrl:            '/spa-page-collection/example'//,
+//            onPageNotFound:     function(context) {
+//                console.log('got an error', context);
+//            }
+        });
 
         var page0 = new Page({el: document.querySelector('.js-page-0'), name: 'page-0', url: '/index.html', title: 'Page #0', next: 'page-1'});
         var page1 = new Page({el: document.querySelector('.js-page-1'), name: 'page-1', url: '/page-1', title: 'Page #1', previous: 'page-0', next: 'page-2'});
