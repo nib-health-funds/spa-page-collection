@@ -12,6 +12,8 @@ Create a new collection.
 
 - `baseUrl` - The common URL path for all pages.
 - `onPageNotFound` - A function to handle URLs that don't map to a page, instead of throwing an error.
+- `hijackClicksOnAnchorTags` - Set whether the router should hijack clicks on <a/> tags and try navigating to a page 
+within the SPA. Careful, setting this option to true will hijack all links - not just links to pages within your Single Page App. Defaults to false.
 
 ### .prepend(page)
 

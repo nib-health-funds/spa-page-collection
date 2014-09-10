@@ -17,6 +17,19 @@
         <h1>Page #0</h1>
         <button class="js-previous" disabled>Previous</button>
         <button class="js-next">Next</button>
+
+        <ul>
+            <li><a href="page-0">Page #0</a></li>
+            <li><a href="page-1">Page #1</a></li>
+            <li><a href="page-2">Page #2</a></li>
+        </ul>
+        <p>
+            <small>
+                These links only work if <code>options.hijackClicksOnAnchorTags</code> is true. Careful, setting this
+                option to true will hijack all links - not just links to pages within your Single Page App.
+            </small>
+        </p>
+
     </div>
 
     <div class="js-page-1 is-hidden">
@@ -43,13 +56,19 @@
             this.url        = options.url;
             this.title      = options.title;
 
-            this.el.querySelector('.js-previous').addEventListener('click', function() {
-                self.emit('navigate', 'previous');
-            });
+            var previous = this.el.querySelector('.js-previous');
+            if (previous) {
+                previous.addEventListener('click', function() {
+                    self.emit('navigate', 'previous');
+                });
+            }
 
-            this.el.querySelector('.js-next').addEventListener('click', function() {
-                self.emit('navigate', 'next');
-            });
+            var next = this.el.querySelector('.js-previous');
+            if (next) {
+                this.el.querySelector('.js-next').addEventListener('click', function () {
+                    self.emit('navigate', 'next');
+                });
+            }
 
         }
 
@@ -86,10 +105,8 @@
 
         var Collection = require('spa-page-collection');
         var collection = new Collection({
-            baseUrl:            '/spa-page-collection/example'//,
-//            onPageNotFound:     function(context) {
-//                console.log('got an error', context);
-//            }
+            baseUrl: '/spa-page-collection/example',
+            hijackClicksOnAnchorTags: true
         });
 
         var page0 = new Page({el: document.querySelector('.js-page-0'), name: 'page-0', url: '/index.html', title: 'Page #0', next: 'page-1'});

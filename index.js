@@ -35,9 +35,18 @@ function PageCollection(options) {
    */
   this.router = require('page');
 
+  this.routerOptions = {};
+
   //set the router base path
   if (options && options.baseUrl) {
     this.router.base(options.baseUrl);
+  }
+
+  //set whether the router should hijack clicks on <a/> tags and try navigating to a page with a URL matching the href
+  if (options && typeof(options.hijackClicksOnAnchorTags) === 'boolean') {
+    this.routerOptions.click = options.hijackClicksOnAnchorTags;
+  } else {
+    this.routerOptions.click = false;
   }
 
   //set the page not found handler
@@ -65,7 +74,8 @@ PageCollection.prototype.listen = function() {
   this.router('*', this.onPageNotFound);
 
   //start routing
-  this.router();
+  console.log(this.routerOptions);
+  this.router(this.routerOptions);
 
   return this;
 };
