@@ -71,6 +71,15 @@ PageCollection.prototype.listen = function() {
 };
 
 /**
+ * Find the index of a page
+ * @param     {Page}  page
+ * @returns   {Number}
+ */
+PageCollection.prototype.indexOf = function(page) {
+  return this.pages.indexOf(page);
+};
+
+/**
  * Find a page by name
  * @param     {String}  name
  * @returns   {Page|null}
@@ -282,7 +291,9 @@ PageCollection.prototype.onRouteMatched = function(context) {
   //find and show the page
   var page = this.findByUrl(url);
   if (page) {
-    this.display(page);
+    if (page !== this.page) {
+      this.display(page);
+    }
   } else{
     throw new Error('Unable to route URL "'+context.path+'" to a page.');
   }
