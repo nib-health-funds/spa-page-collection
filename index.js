@@ -74,7 +74,6 @@ PageCollection.prototype.listen = function() {
   this.router('*', this.onPageNotFound);
 
   //start routing
-  console.log(this.routerOptions);
   this.router(this.routerOptions);
 
   return this;
