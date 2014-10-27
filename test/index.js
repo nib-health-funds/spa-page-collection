@@ -6,7 +6,7 @@ function createPage(name, url, title) {
   return emitter({
 
     getName: function() {
-      return url;
+      return name;
     },
 
     getUrl: function() {
@@ -34,26 +34,28 @@ var collection;
 describe('spa-page-collection', function() {
 
   beforeEach(function() {
-    collection = new Collection({});
+    collection = new Collection({
+      ignoreQueryString: true
+    });
   });
 
   describe('.prepend()', function() {
 
     it('should update the number of pages', function() {
       assert.equal(0, collection.count());
-      collection.prepend(createPage('page-3', 'page-3'));
+      collection.prepend(createPage('page-3', '/page-3'));
       assert.equal(1, collection.count());
-      collection.prepend(createPage('page-2', 'page-2'));
+      collection.prepend(createPage('page-2', '/page-2'));
       assert.equal(2, collection.count());
-      collection.prepend(createPage('page-1', 'page-1'));
+      collection.prepend(createPage('page-1', '/page-1'));
       assert.equal(3, collection.count());
     });
 
     it('should be in the correct order', function() {
 
-      collection.prepend(createPage('page-3', 'page-3'));
-      collection.prepend(createPage('page-2', 'page-2'));
-      collection.prepend(createPage('page-1', 'page-1'));
+      collection.prepend(createPage('page-3', '/page-3'));
+      collection.prepend(createPage('page-2', '/page-2'));
+      collection.prepend(createPage('page-1', '/page-1'));
 
       assert.equal('page-1', collection.at(0).getName());
       assert.equal('page-2', collection.at(1).getName());
@@ -63,7 +65,7 @@ describe('spa-page-collection', function() {
 
     it('should forward events', function(done) {
 
-      var page = createPage('page-3', 'page-3');
+      var page = createPage('page-3', '/page-3');
 
       collection.prepend(page);
       collection.on('page:click', function() {
@@ -74,28 +76,40 @@ describe('spa-page-collection', function() {
 
     });
 
-    it('should listen for navigate events and change the current page', function(done) {
+    it('should emit a navigate event followed by a display event and change the current page', function(done) {
+      var navigated = true;
 
-      var page2 = createPage('page-2', 'page-2');
+      var page2 = createPage('page-2', '/page-2');
       collection.prepend(page2);
 
-      var page1 = createPage('page-1', 'page-1');
+      var page1 = createPage('page-1', '/page-1');
       collection.prepend(page1);
 
       collection.on('navigate', function(page) {
+        console.log('navigated');
+        navigated = true;
         assert.equal(page2, page);
+      });
+
+      collection.on('display', function(page) {
+        console.log('display');
+        assert(navigated);
+        assert.equal(page2, page);
+        assert.equal(page2, collection.current());
         done();
       });
+
+      collection.listen();
 
       page1.emit('navigate', 'page-2');
     });
 
     it('should display the page when the route is matched', function() {
 
-      var page2 = createPage('page-2', 'page-2');
+      var page2 = createPage('page-2', '/page-2');
       collection.prepend(page2);
 
-      var page1 = createPage('page-1', 'page-1');
+      var page1 = createPage('page-1', '/page-1');
       collection.prepend(page1);
 
       collection.on('display', function(page) {

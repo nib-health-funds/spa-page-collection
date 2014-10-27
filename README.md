@@ -11,9 +11,14 @@ Create a new collection.
 #### Options:
 
 - `baseUrl` - The common URL path for all pages.
+- `ignoreQueryString` - Whether the query string should be ignored for routing.
 - `onPageNotFound` - A function to handle URLs that don't map to a page, instead of throwing an error.
 - `hijackClicksOnAnchorTags` - Set whether the router should hijack clicks on <a/> tags and try navigating to a page 
 within the SPA. Careful, setting this option to true will hijack all links - not just links to pages within your Single Page App. Defaults to false.
+
+### .current()
+
+Get the currently selected page.
 
 ### .prepend(page)
 

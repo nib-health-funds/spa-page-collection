@@ -117,6 +117,15 @@ PageCollection.prototype.findByUrl = function(url) {
 };
 
 /**
+ * Get the current page
+ * @param     {Page|String} page
+ * @returns   {PageCollection}
+ */
+PageCollection.prototype.current = function() {
+  return this.page;
+};
+
+/**
  * Navigate to the page
  * @param     {Page|String} page
  * @returns   {PageCollection}
@@ -286,7 +295,6 @@ PageCollection.prototype.display = function(page) {
  * @param     {Object}  context
  */
 PageCollection.prototype.onRouteMatched = function(context) {
-
   var url = context.path;
 
   //strip the querystring from the URL
