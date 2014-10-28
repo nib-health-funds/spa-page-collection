@@ -65,3 +65,7 @@ Show the page.
 ### .hide()
 
 Hide the page.
+
+### .on()
+
+Attach an event listener to the page.

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .is-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-1 is-hidden">
+        <h1>Page 1</h1>
+    </div>
+
+    <div class="page-2 is-hidden">
+        <h1>Page 2</h1>
+    </div>
+
+    <script src="build/build.js"></script>
+    <script>
+
+        var emitter     = require('emitter');
+        var pages       = require('spa-page-collection')({
+            baseUrl: '/spa-page-collection'
+        });
+
+        var page1 = new (function() {
+
+            this.getName = function() {
+                return 'example';
+            };
+
+            this.getUrl = function() {
+                return '/example.html';
+            };
+
+            this.getTitle = function() {
+                return 'Example page';
+            };
+
+            this.hide = function() {
+                document.querySelector('.page-1').classList.add('is-hidden');
+                return this;
+            };
+
+            this.show = function() {
+                document.querySelector('.page-1').classList.remove('is-hidden');
+                return this;
+            };
+
+        })();
+        emitter(page1);
+
+        var page2 = new (function() {
+
+            this.getName = function() {
+                return 'error';
+            };
+
+            this.getUrl = function() {
+                return '/error.html';
+            };
+
+            this.getTitle = function() {
+                return 'Error page';
+            };
+
+            this.hide = function() {
+                document.querySelector('.page-2').classList.add('is-hidden');
+                return this;
+            };
+
+            this.show = function() {
+                document.querySelector('.page-2').classList.remove('is-hidden');
+                return this;
+            };
+
+        })();
+        emitter(page2);
+
+        pages.append(page1);
+        pages.append(page2);
+        pages.listen();
+        pages.on('navigate', function(event) {
+            event.preventDefault();
+            //console.log('Navigation prevented');
+        });
+
+        //pages.navigate('error');
+        page1.emit('navigate', 'next');
+
+
+    </script>
+
+</body>
+</html>

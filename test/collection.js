@@ -1,9 +1,16 @@
 var assert      = require('assert');
+var emitter     = require('emitter');
 var Collection  = require('spa-page-collection');
 
+/**
+ * Create a page
+ * @param   {String} name
+ * @param   {String} url
+ * @param   {String} title
+ * @returns {Object}
+ */
 function createPage(name, url, title) {
-  var emitter = require('emitter');
-  return emitter({
+  var page = {
 
     getName: function() {
       return name;
@@ -27,16 +34,24 @@ function createPage(name, url, title) {
       return this;
     }
 
-  });
+  };
+  emitter(page);
+  return page;
 }
 
 var collection;
 describe('spa-page-collection', function() {
 
   beforeEach(function() {
+    collection;
     collection = new Collection({
+      onPageNotFound: function() {},
       ignoreQueryString: true
     });
+  });
+
+  afterEach(function() {
+    collection.router.callbacks = [];
   });
 
   describe('.prepend()', function() {
@@ -68,7 +83,7 @@ describe('spa-page-collection', function() {
       var page = createPage('page-3', '/page-3');
 
       collection.prepend(page);
-      collection.on('page:click', function() {
+      collection.once('page:click', function() {
         done();
       });
 
@@ -85,16 +100,14 @@ describe('spa-page-collection', function() {
       var page1 = createPage('page-1', '/page-1');
       collection.prepend(page1);
 
-      collection.on('navigate', function(page) {
-        console.log('navigated');
+      collection.once('navigate', function(event) {
         navigated = true;
-        assert.equal(page2, page);
+        assert.equal(page2, event.getPage());
       });
 
-      collection.on('display', function(page) {
-        console.log('display');
+      collection.once('display', function(event) {
         assert(navigated);
-        assert.equal(page2, page);
+        assert.equal(page2, event.getPage());
         assert.equal(page2, collection.current());
         done();
       });
@@ -112,12 +125,12 @@ describe('spa-page-collection', function() {
       var page1 = createPage('page-1', '/page-1');
       collection.prepend(page1);
 
-      collection.on('display', function(page) {
+      collection.once('display', function(page) {
         assert.equal(page2, page);
         done();
       });
 
-      collection.router(page2.getUrl());
+      //collection.router(page2.getUrl());
     });
 
   });

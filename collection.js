@@ -1,10 +1,7 @@
-var emitter = require('emitter');
-var forward = require('forward-events');
-
-/**
- * A collection of pages
- * @class
- */
+var router    = require('page');
+var emitter   = require('emitter-on-steroids');
+var forward   = require('forward-events');
+var PageEvent = require('./event');
 
 /**
  * A collection of pages
@@ -14,6 +11,10 @@ var forward = require('forward-events');
  * @param   {Function(Object)}  options.onPageNotFound
  */
 function PageCollection(options) {
+
+  if (!(this instanceof PageCollection)) {
+    return new PageCollection(options);
+  }
 
   /**
    * The current page
@@ -33,7 +34,7 @@ function PageCollection(options) {
    * The router (page.js)
    * @type  {page.js}
    */
-  this.router = require('page');
+  this.router = router;
 
   this.routerOptions = {};
 
@@ -74,7 +75,7 @@ PageCollection.prototype.listen = function() {
   this.router('*', this.onPageNotFound);
 
   //start routing
-  this.router(this.routerOptions);
+  this.router.start(this.routerOptions);
 
   return this;
 };
@@ -131,6 +132,7 @@ PageCollection.prototype.current = function() {
  * @returns   {PageCollection}
  */
 PageCollection.prototype.navigate = function(page) {
+  var self = this;
 
   //fetch the page by name
   if (typeof page === 'string') {
@@ -147,10 +149,16 @@ PageCollection.prototype.navigate = function(page) {
     return this;
   }
 
-  //navigate to the page
-  this.router(page.getUrl());
+  //let libraries handle stuff
+  this.emit(new PageEvent('navigate', this, page), function(err, event) {
 
-  this.emit('navigate', page);
+    //navigate to the page if navigation hasn't been prevented
+    if (!event.isDefaultPrevented()) {
+      self.router.show(event.getPage().getUrl());
+    }
+
+  });
+
   return this;
 };
 
@@ -284,7 +292,7 @@ PageCollection.prototype.display = function(page) {
   //set the current page
   this.page = page;
 
-  this.emit('display', page);
+  this.emit(new PageEvent('display', this, page));
   return this;
 };
 
