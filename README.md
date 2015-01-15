@@ -18,7 +18,7 @@ within the SPA. Careful, setting this option to true will hijack all links - not
 
 ### .current()
 
-Get the currently selected page.
+Get the currently displayed page.
 
 ### .prepend(page)
 
